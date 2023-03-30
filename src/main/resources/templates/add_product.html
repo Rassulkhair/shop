@@ -1,0 +1,79 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <title>Добавить</title>
+</head>
+<body class="h-[100vh] bg-gray-100">
+<div class="container h-full mx-auto flex justify-center items-center">
+
+    <form th:if="${categoryId == null}" th:action="@{/products/add}"
+          class="h-min lg:w-1/4 bg-white px-10 py-12 rounded-3xl shadow-lg">
+        <p class="text-lg 2xl:text-xl mb-2 font-medium">Выберите категорию</p>
+        <div th:each="category : ${categories}" class="flex items-center gap-2">
+            <input type="radio" name="category" th:value="*{category.getId()}" th:name="categoryId"
+                   th:id="${category.getId()}"
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+            <label th:text="${category.getName()}" th:for="${category.getId()}"
+                   class="2xl:text-lg"></label>
+        </div>
+        <button type="submit"
+                class="text-white w-full bg-yellow-400 hover:bg-yellow-500 mt-5 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
+            Применить
+        </button>
+    </form>
+
+    <form th:if="${categoryId != null}" th:action="@{/products/add}" method="post"
+          class="h-min lg:w-2/5 bg-white px-10 py-12 rounded-3xl shadow-lg">
+        <h2 class="text-3xl text-center pb-6" th:text="${category.getName()}"></h2>
+        <input type="hidden" name="categoryId" th:value="*{category.getId()}">
+        <div th:object="${product}">
+            <div class="my-5 flex flex-col gap-2">
+                <label for="name" class="font-medium text-black">Название</label>
+                <input type="text" th:field="*{name}" id="name"
+                       class="py-1.5 px-2.5 border border-gray-300 bg-white rounded-lg" required minlength="2"
+                       autocomplete="off">
+            </div>
+            <div class="my-5 flex flex-col gap-2">
+                <label for="price" class="font-medium text-black">Цена</label>
+                <input type="text" th:field="*{price}" id="price"
+                       class="py-1.5 px-2.5 border border-gray-300 bg-white rounded-lg" required>
+            </div>
+            <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
+                <div th:each="option, stat : ${options}" class="flex flex-col gap-2 w-full">
+                    <label th:for="${option.getId()}" class="font-medium text-yellow"
+                           th:text="${option.getName()}"></label>
+                    <input type="text" th:value="${optionValues.get(stat.index)}" name="optionValues"
+                           th:id="${option.getId()}"
+                           class="py-1.5 px-2.5 border border-yellow-300 bg-yellow-50 rounded-lg" required>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-5 mt-10">
+            <button type="submit"
+                    class="text-white w-full bg-yellow-400 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                Добавить
+            </button>
+            <a href="/products"
+               class="text-white w-full bg-yellow-400 hover:bg-yellow-600 font-medium text-center rounded-lg text-sm px-5 py-2.5">
+                Отменить
+            </a>
+        </div>
+    </form>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
+</html>
