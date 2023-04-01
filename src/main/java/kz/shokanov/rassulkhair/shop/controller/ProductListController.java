@@ -79,10 +79,9 @@ public class ProductListController {
     @PostMapping(path = "/products/add")
     public String addProduct(@ModelAttribute Product product,
                              @RequestParam Long categoryId,
+                             @RequestParam List<String> optionValues,
                              Model model) {
-        Category category = categoryRepo.findById(categoryId).orElseThrow();
-        product.setCategory(category);
-        productRepo.save(product);
+        productService.addProduct(categoryId, product, optionValues);
         model.addAttribute("message", "Product added successfully");
         return "redirect:/products";
     }

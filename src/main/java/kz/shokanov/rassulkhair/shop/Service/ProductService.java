@@ -1,5 +1,6 @@
 package kz.shokanov.rassulkhair.shop.Service;
 
+import kz.shokanov.rassulkhair.shop.entity.Category;
 import kz.shokanov.rassulkhair.shop.entity.Option;
 import kz.shokanov.rassulkhair.shop.entity.Product;
 import kz.shokanov.rassulkhair.shop.entity.Value;
@@ -23,7 +24,25 @@ public class ProductService {
     @Autowired
     ValueRepo valueRepo;
 
+    public void addProduct(long categoryId, Product product, List<String> values) {
+        Category category = categoryRepo.findById(categoryId).orElseThrow();
+        List<Option> options = optionRepo.findAllByCategoryOrderById(category);
+        product.setCategory(category);
+        productRepo.save(product);
+
+        for (int i = 0; i < options.size(); i++) {
+            Value value = new Value();
+            value.setProduct(product);
+            value.setOption(options.get(i));
+            value.setValue(values.get(i));
+            valueRepo.save(value);
+        }
+    }
+
     public void updateProduct(long productId, String name, Double price, List<String> values) {
+        System.out.println("---------------");
+        System.out.println(values);
+        System.out.println("---------------");
         Product product = productRepo.findById(productId).orElseThrow();
         if (name != null) product.setName(name);
         if (price != null) product.setPrice(price);

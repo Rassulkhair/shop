@@ -60,5 +60,8 @@
         Средняя стоимость: <span class="font-semibold" th:text="${avg}"></span>
     </div>
 </div>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
 </body>
 </html>
