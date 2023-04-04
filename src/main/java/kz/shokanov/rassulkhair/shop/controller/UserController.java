@@ -1,18 +1,16 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
-import kz.shokanov.rassulkhair.shop.Service.UserService;
-import kz.shokanov.rassulkhair.shop.users.User;
-import lombok.Getter;
+import kz.shokanov.rassulkhair.shop.service.UserService;
+import kz.shokanov.rassulkhair.shop.entity.User;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class UserController {
 
     @PostMapping("/registration")
     public String saveNewUser(@Validated @ModelAttribute("user") User user) {
-        userService.createUser(user.getUsername(), user.getPassword());
+        userService.createUser(user.getLogin(), user.getPassword(), user.getName(), user.getLastname(), LocalDateTime.now());
         return "redirect:/login";
     }
 }

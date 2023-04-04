@@ -1,4 +1,4 @@
-package kz.shokanov.rassulkhair.shop.Service;
+package kz.shokanov.rassulkhair.shop.service;
 
 import kz.shokanov.rassulkhair.shop.entity.Category;
 import kz.shokanov.rassulkhair.shop.entity.Option;

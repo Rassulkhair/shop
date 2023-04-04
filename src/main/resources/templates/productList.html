@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta charset="UTF-8">
@@ -15,6 +15,7 @@
     <title>Product List</title>
 </head>
 <body>
+<h1>HELLO</h1> <p sec:authentication="principal.username"></p>
 <h3 class="my-10 text-center text-3xl" th:text="${category_name}"></h3>
 <div class="container mx-auto relative">
     <div class="flex justify-end">
