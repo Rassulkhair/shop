@@ -25,6 +25,12 @@ public class Product {
    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
    @JsonIgnore
    private List<Value> values;
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<Review> reviews;
 
 
+    public List<Review> getReviews() {
+        return reviews;
+    }
 }

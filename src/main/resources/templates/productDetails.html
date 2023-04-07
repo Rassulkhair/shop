@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    .rate {
+      float: left;
+      height: 46px;
+      padding: 0 10px;
+    }
+    .rate:not(:checked) > input {
+      position:absolute;
+      top:-9999px;
+    }
+    .rate:not(:checked) > label {
+      float:right;
+      width:1em;
+      overflow:hidden;
+      white-space:nowrap;
+      cursor:pointer;
+      font-size:30px;
+      color:#ccc;
+    }
+    .rate:not(:checked) > label:before {
+      content: '★ ';
+    }
+    .rate > input:checked ~ label {
+      color: #ffc700;
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+      color: #deb217;
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+      color: #c59b08;
+    }
+
+    /* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
+  </style>
+</head>
+<body>
+<h1>Product Details</h1>
+
+<div th:object="${product}">
+  <p th:text="*{name}"></p>
+  <p th:text="*{price}"></p>
+</div>
+
+<h3>Reviews</h3>
+<ul th:each="review : ${product.reviews}">
+  <li  th:text="${review.user.getName()}"></li>
+  <li  th:text="${review.text}"></li>
+  <li  th:text="${review.rating}"></li>
+</ul>
+
+<form th:action="@{|/products/${product.getId()}/publish_review|}" method="post" th:object="${reviews}">
+  <label for="text">Comment:</label>
+  <input type="text" id="text" name="text" th:value="*{text}">
+  <label>Rating:</label>
+  <div class="rate">
+    <input type="radio" id="star5" name="rating" value="5" th:checked="${reviews.rating == 5}" required/>
+    <label for="star5" title="text">5 stars</label>
+    <input type="radio" id="star4" name="rating" value="4" th:checked="${reviews.rating == 4}" required/>
+    <label for="star4" title="text">4 stars</label>
+    <input type="radio" id="star3" name="rating" value="3" th:checked="${reviews.rating == 3}" required/>
+    <label for="star3" title="text">3 stars</label>
+    <input type="radio" id="star2" name="rating" value="2" th:checked="${reviews.rating == 2}" required/>
+    <label for="star2" title="text">2 stars</label>
+    <input type="radio" id="star1" name="rating" value="1" th:checked="${reviews.rating == 1}" required/>
+    <label for="star1" title="text">1 star</label>
+  </div>
+  <input type="submit" value="Add Review"/>
+</form>
+
+<a th:href="@{/products}">Back to Product List</a>
+
+<form th:action="@{/logout}" method="post">
+  <input type="submit" value="Sign Out"/>
+</form>
+</body>
+</html>
