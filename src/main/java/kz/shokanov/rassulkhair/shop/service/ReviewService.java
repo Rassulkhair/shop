@@ -26,11 +26,11 @@ public class ReviewService {
         this.reviewRepo = reviewRepo;
     }
 
-    public double getAvgRating(long productId){
+    public double getAvgRating(long productId) {
         List<Review> reviews = productRepo.findById(productId).orElseThrow().getReviews();
         double avg = 0;
-        if (!reviews.isEmpty()){
-            for (Review review : reviews){
+        if (!reviews.isEmpty()) {
+            for (Review review : reviews) {
                 avg = avg + review.getRating();
             }
             avg = avg / reviews.size();

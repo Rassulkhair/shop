@@ -1,5 +1,6 @@
 package kz.shokanov.rassulkhair.shop.repository;
 
+import jakarta.transaction.Transactional;
 import kz.shokanov.rassulkhair.shop.entity.Cart;
 import kz.shokanov.rassulkhair.shop.entity.Product;
 import kz.shokanov.rassulkhair.shop.entity.User;
@@ -12,4 +13,6 @@ public interface CartRepo extends JpaRepository<Cart, Long> {
     Cart findCartByUserAndProduct(User user, Product product);
     Boolean existsCartByUserAndProduct(User user, Product product);
     Boolean existsCartByProduct(Product product);
+    @Transactional
+    void deleteAllByUser(User user);
 }

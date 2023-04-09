@@ -5,10 +5,15 @@ package kz.shokanov.rassulkhair.shop.entity;
 import jakarta.persistence.*;
 
 import kz.shokanov.rassulkhair.shop.entity.enumiration.Status;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -18,7 +23,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id)")
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Status status;
@@ -27,65 +32,4 @@ public class Order {
 
     private LocalDateTime created_at;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderProduct> orderProducts;
-
-
-    public Order() {
-    }
-
-    public Order(User user, Status status, String address, LocalDateTime created_at) {
-        this.user = user;
-        this.status = status;
-        this.address = address;
-        this.created_at = created_at;
-    }
-
-    public List<OrderProduct> getOrderProducts() {
-        return orderProducts;
-    }
-
-    public void setOrderProducts(List<OrderProduct> orderProducts) {
-        this.orderProducts = orderProducts;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
-    }
 }
