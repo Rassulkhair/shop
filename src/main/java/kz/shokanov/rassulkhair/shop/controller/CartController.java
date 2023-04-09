@@ -29,7 +29,6 @@ public class CartController {
     @PostMapping("/{productId}")
     public String addToCart(@PathVariable(value = "productId") Long productId,
                             @RequestParam(value = "count") int count) {
-        System.out.println("ХУЙ");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
@@ -68,9 +67,6 @@ public class CartController {
 
         return "cart";
     }
-
-    // Удалить элемент из корзины
-
     @PostMapping("/delete/{cartItemId}")
     public String deleteCartItem(@PathVariable(value = "cartItemId") Long cartItemId) {
 
