@@ -1,0 +1,76 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <title>Корзина</title>
+</head>
+<body class="bg-gray-100">
+<div class="container m-20 mx-auto flex justify-center items-center">
+    <p class="text-5xl">Корзина</p>
+</div>
+
+<table class="w-full text-left">
+    <thead class="bg-white uppercase text-black">
+    <tr class="border-b">
+        <th class="px-6 py-3">#</th>
+        <th class="px-6 py-3">Название</th>
+        <th th:if="${param.isEmpty()}" class="px-6 py-3">Категория</th>
+        <th class="px-6 py-3">Цена</th>
+        <th class="px-6 py-3">Количество</th>
+        <th class="px-6 py-3">Общая цена за продукт</th>
+        <th class="px-6 py-3"></th>
+        <th class="px-6 py-3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="font-medium even:bg-gray-100" th:each="cart : ${cartList}">
+        <td class="px-6 py-3 text-black" th:text="${cart.getId()}"></td>
+        <td class="px-6 py-3 font-semibold text-black" th:text="${cart.getProduct().getName()}"></td>
+        <td class="px-6 py-3 text-black" th:text="${cart.getProduct().getCategory().getName()}"></td>
+        <td class="px-6 py-3 text-black" th:text="${cart.getProduct().getPrice()}"></td>
+        <td class="px-6 py-3 text-black" th:text="${cart.getCount()}"></td>
+        <td class="px-6 py-3 text-black" th:text="${cart.getCount() * cart.getProduct().getPrice()}"></td>
+        <td class="text-center">
+            <form th:action="@{|/cart/delete/${cart.getId()}|}" method="post">
+                <button type="submit" class="text-red-500 hover:text-red-700 text-lg">
+                    <p>УДАЛИТЬ</p>
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<div class="text-center pr-3 py-6 text-xl ">
+    <a class="text-yellow-500 hover:text-yellow-700 text-lg"
+       href="/products">
+        <i class="fa-solid fa-house"></i>
+    </a></div>
+
+<div class="text-right pr-3 py-6 text-xl ">
+    Общая стоимость: <span class="font-semibold" th:text="${summariseCOST}"></span>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+    .container{
+        margin-top: 30px;
+    }
+    .fa-house {
+        font-size: 2em;
+    }
+</style>
+</html>

@@ -28,9 +28,7 @@ public class Product {
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
-
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Cart> carts;
 }

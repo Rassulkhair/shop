@@ -1,15 +1,16 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
+import kz.shokanov.rassulkhair.shop.entity.User;
+import kz.shokanov.rassulkhair.shop.repository.*;
 import kz.shokanov.rassulkhair.shop.service.ProductService;
 import kz.shokanov.rassulkhair.shop.entity.Category;
 import kz.shokanov.rassulkhair.shop.entity.Option;
 import kz.shokanov.rassulkhair.shop.entity.Product;
-import kz.shokanov.rassulkhair.shop.repository.CategoryRepo;
-import kz.shokanov.rassulkhair.shop.repository.OptionRepo;
-import kz.shokanov.rassulkhair.shop.repository.ProductRepo;
-import kz.shokanov.rassulkhair.shop.repository.ValueRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +32,16 @@ public class ProductListController {
 
     @Autowired
     ProductService productService;
+    @Autowired
+    UserRepo userRepo;
 
     @GetMapping(path = "products")
     public String getProducts(@RequestParam(required = false) Long categoryId,
                               Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
+        User user = userRepo.findById(userId).orElseThrow();
         Sort sort = Sort.by(Sort.Order.desc("price"),
                 Sort.Order.asc("id"));
         List<Product> products = productRepo.findAll(sort);
@@ -51,6 +58,7 @@ public class ProductListController {
             avg = avg / products.size();
         }
         model.addAttribute("avg", avg);
+        model.addAttribute("user", user);
         model.addAttribute("products", products);
         model.addAttribute("categoryId", categoryId);
         return "productList";
