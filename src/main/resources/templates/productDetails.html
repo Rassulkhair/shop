@@ -148,6 +148,7 @@
       th:text="${#numbers.formatDecimal(@reviewService.getAvgRating(product.getId()), 0, 1, 'POINT')}"></span>
 <span class="text-gray-700">/ 5</span>
 
+<div th:if="${@reviewService.isReviewPresent(product.getId())}">
 <form th:action="@{|/products/${product.getId()}/publish_review|}" method="post" th:object="${reviews}">
   <label for="text">Comment:</label>
   <input type="text" id="text" name="text" th:value="*{text}">

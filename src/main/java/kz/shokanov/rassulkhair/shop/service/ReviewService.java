@@ -5,14 +5,12 @@ import kz.shokanov.rassulkhair.shop.entity.Review;
 import kz.shokanov.rassulkhair.shop.entity.User;
 import kz.shokanov.rassulkhair.shop.repository.ProductRepo;
 import kz.shokanov.rassulkhair.shop.repository.ReviewRepo;
+import kz.shokanov.rassulkhair.shop.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class ReviewService {
@@ -20,6 +18,9 @@ public class ReviewService {
     private final ProductRepo productRepo;
 
     private final ReviewRepo reviewRepo;
+    private UserRepo userRepo;
+    @Autowired
+    private UserService userService;
 
     public ReviewService(ProductRepo productRepo, ReviewRepo reviewRepo) {
         this.productRepo = productRepo;
@@ -37,5 +38,12 @@ public class ReviewService {
         }
         return avg;
     }
+
+    public boolean isReviewPresent(Product product) {
+        User user = userService.getCurrentUser();
+        Review review = reviewRepo.findByProductAndUser(product, user);
+        return review == null;
+    }
+
 }
 
