@@ -6,6 +6,7 @@ import kz.shokanov.rassulkhair.shop.service.ProductService;
 import kz.shokanov.rassulkhair.shop.entity.Category;
 import kz.shokanov.rassulkhair.shop.entity.Option;
 import kz.shokanov.rassulkhair.shop.entity.Product;
+import kz.shokanov.rassulkhair.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -34,13 +35,13 @@ public class ProductListController {
     ProductService productService;
     @Autowired
     UserRepo userRepo;
+    @Autowired
+    UserService userService;
 
     @GetMapping(path = "products")
     public String getProducts(@RequestParam(required = false) Long categoryId,
                               Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
+        Long userId = userService.getCurrentUser().getId();
         User user = userRepo.findById(userId).orElseThrow();
         Sort sort = Sort.by(Sort.Order.desc("price"),
                 Sort.Order.asc("id"));

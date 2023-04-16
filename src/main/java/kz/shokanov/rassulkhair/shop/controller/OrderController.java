@@ -64,6 +64,6 @@ public class OrderController {
         orderRepo.save(order);
         cartRepo.deleteAllByUser(currentUser);
 
-        return "redirect:/order/" + order.getId();
+        return "redirect:/products";
     }
 }
