@@ -2,9 +2,11 @@ package kz.shokanov.rassulkhair.shop.controller;
 
 
 import kz.shokanov.rassulkhair.shop.entity.Cart;
+import kz.shokanov.rassulkhair.shop.entity.OrderDetails;
 import kz.shokanov.rassulkhair.shop.entity.User;
 import kz.shokanov.rassulkhair.shop.entity.enumiration.Status;
 import kz.shokanov.rassulkhair.shop.repository.CartRepo;
+import kz.shokanov.rassulkhair.shop.repository.OrderDetailsRepo;
 import kz.shokanov.rassulkhair.shop.repository.OrderRepo;
 import kz.shokanov.rassulkhair.shop.repository.UserRepo;
 import kz.shokanov.rassulkhair.shop.service.UserService;
@@ -35,6 +37,9 @@ public class OrderController {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private OrderDetailsRepo orderDetailsRepo;
+
     @GetMapping()
     public String orderPage(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,10 +63,19 @@ public class OrderController {
         User currentUser = userRepo.findUserByName(userDetails.getUsername());
         order.setUser(currentUser);
 
-        order.setStatus(Status.DELIEVERED);
+        order.setStatus(Status.INSTOCK);
         order.setAddress(address);
         order.setCreated_at(LocalDateTime.now());
         orderRepo.save(order);
+        List<Cart> carts = cartRepo.findByUser(currentUser);
+        for (var cart: carts
+             ) {
+            OrderDetails orderDetails = new OrderDetails();
+            orderDetails.setOrder(order);
+            orderDetails.setCount(cart.getCount());
+            orderDetails.setProduct(cart.getProduct());
+            orderDetailsRepo.save(orderDetails);
+        }
         cartRepo.deleteAllByUser(currentUser);
 
         return "redirect:/products";

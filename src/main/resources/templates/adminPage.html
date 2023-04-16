@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -14,8 +14,46 @@
     <title>Корзина</title>
 </head>
 <body class="bg-gray-100">
-<h1> АДМИН ПАНЕЛЬ РАБОТАЕТ</h1>
+<table class="w-full text-left">
+    <thead class="bg-white uppercase text-black">
+    <tr class="border-b">
+        <th class="px-6 py-3">#</th>
+        <th class="px-6 py-3">Заказчик</th>
+        <th class="px-6 py-3">Адрес</th>
+        <th class="px-6 py-3">Дата заказа</th>
+        <th class="px-6 py-3">Статус</th>
+        <th class="px-6 py-3"></th>
+        <th class="px-6 py-3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="font-medium even:bg-gray-100" th:each="order : ${orders}">
+        <td class="px-6 py-3 text-black" th:text="${order.getId()}"></td>
+        <td class="px-6 py-3 font-semibold text-black" th:text="${order.getUser().name}"></td>
+        <td class="px-6 py-3" th:text="${order.getAddress()}"></td>
+        <td class="px-6 py-3 text-black" th:text="${order.getCreated_at()}"></td>
+        <td class="px-6 py-3">
+            <form id="updateStatusForm" method="post" action="/admin/updateOrderStatus">
+                <input type="hidden" name="orderId" th:value="${order.getId()}">
+                <select class="border border-gray-400 rounded-md px-3 py-2"
+                        name="status"
+                        th:onchange="'javascript:submit();'">
+                    <option th:each="status : ${T(kz.shokanov.rassulkhair.shop.entity.enumiration.Status).values()}"
+                            th:text="${status.name()}"
+                            th:selected="${order.getStatus().name() == status.name()}">
+                    </option>
+                </select>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
+<a href="/products">
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-caret-left-square-fill" viewBox="0 0 16 16">
+    <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm10.5 10V4a.5.5 0 0 0-.832-.374l-4.5 4a.5.5 0 0 0 0 .748l4.5 4A.5.5 0 0 0 10.5 12z"/>
+</svg>
+</a>
 </body>
 <style>
     body {
@@ -26,6 +64,263 @@
     }
     .fa-house {
         font-size: 2em;
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #F7FAFC;
+    }
+
+    .container {
+        margin-top: 30px;
+    }
+
+    .fa-house {
+        font-size: 2em;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    th {
+        background-color: #F3F4F6;
+        text-align: left;
+        padding: 12px 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+        color: #718096;
+    }
+
+    td {
+        padding: 12px 16px;
+        font-weight: 400;
+        font-size: 14px;
+        color: #4A5568;
+    }
+
+    tbody tr:hover {
+        background-color: #E5E7EB;
+    }
+
+    select {
+        border: 1px solid #E5E7EB;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #4A5568;
+    }
+
+    .btn {
+        background-color: #4C51BF;
+        color: #FFF;
+        border-radius: 4px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #434190;
+    }
+
+    .btn-white {
+        background-color: #FFF;
+        color: #4A5568;
+        border: 1px solid #E5E7EB;
+    }
+
+    .btn-white:hover {
+        background-color: #F3F4F6;
+    }
+
+    .btn-delete {
+        background-color: #E53E3E;
+        color: #FFF;
+    }
+
+    .btn-delete:hover {
+        background-color: #C53030;
+    }
+
+    .mt {
+        margin-top: 0.5rem;
+    }
+
+    .mb {
+        margin-bottom: 0.5rem;
+    }
+
+    .ml {
+        margin-left: 0.5rem;
+    }
+    .mr {
+        margin-right: 0.5rem;
+    }
+
+    .max-w-sm {
+        max-width: 24rem;
+    }
+
+    .max-w-md {
+        max-width: 28rem;
+    }
+
+    .max-w-lg {
+        max-width: 32rem;
+    }
+
+    .max-w-xl {
+        max-width: 36rem;
+    }
+
+    .max-w-2xl {
+        max-width: 42rem;
+    }
+
+    .max-w-3xl {
+        max-width: 48rem;
+    }
+
+    .max-w-4xl {
+        max-width: 56rem;
+    }
+
+    .max-w-5xl {
+        max-width: 64rem;
+    }
+
+    .max-w-6xl {
+        max-width: 72rem;
+    }
+
+    .max-w-7xl {
+        max-width: 80rem;
+    }
+
+    .max-w-full {
+        max-width: 100%;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .items-center {
+        align-items: center;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-gray-600 {
+        color: #718096;
+    }
+
+    .text-gray-700 {
+        color: #4A5568;
+    }
+
+    .text-gray-800 {
+        color: #2D3748;
+    }
+
+    .text-gray-900 {
+        color: #1A202C;
+    }
+
+    .text-blue-500 {
+        color: #4299e1;
+    }
+
+    .text-white {
+        color: #FFF;
+    }
+
+    .bg-white {
+        background-color: #FFF;
+    }
+
+    .bg-blue-500 {
+        background-color: #4299e1;
+    }
+
+    .bg-gray-100 {
+        background-color: #F7FAFC;
+    }
+
+    .bg-gray-200 {
+        background-color: #EDF2F7;
+    }
+
+    .bg-gray-300 {
+        background-color: #E2E8F0;
+    }
+
+    .bg-gray-400 {
+        background-color: #CBD5E0;
+    }
+
+    .bg-gray-500 {
+        background-color: #A0AEC0;
+    }
+
+    .bg-gray-600 {
+        background-color: #718096;
+    }
+
+    .bg-gray-700 {
+        background-color: #4A5568;
+    }
+
+    .bg-gray-800 {
+        background-color: #2D3748;
+    }
+
+    .bg-red-500 {
+        background-color: #E53E3E;
+    }
+
+    .hover\:bg-blue-400:hover {
+        background-color: #90cdf4;
+    }
+
+    .hover\:bg-gray-100:hover {
+        background-color: #F7FAFC;
+    }
+
+    .hover\:bg-gray-200:hover {
+        background-color: #EDF2F7;
+    }
+
+    .hover\:bg-gray-300:hover {
+        background-color: #E2E8F0;
+    }
+
+    .hover\:bg-gray-400:hover {
+        background-color: #CBD5E0;
+    }
+
+    .hover\:bg-gray-500:hover {
+        background-color: #A0AEC0;
+    }
+
+    .hover\:bg-gray-600:hover {
+        background-color: #718096;
+    }
+
+    .hover\:bg-gray-700:hover {
+        background-color: #4A5568;
     }
 </style>
 </html>

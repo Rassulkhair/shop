@@ -22,7 +22,21 @@
        href="/cart">
         <i class="fa-solid fa-cart-shopping"></i>
     </a>
-    <div class="flex justify-end">
+
+    <a class="text-red-500 hover:text-red-700 text-lg" style="margin-top: 30px"
+       href="/admin/panel" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-capsule" viewBox="0 0 16 16">
+            <path d="M1.828 8.9 8.9 1.827a4 4 0 1 1 5.657 5.657l-7.07 7.071A4 4 0 1 1 1.827 8.9Zm9.128.771 2.893-2.893a3 3 0 1 0-4.243-4.242L6.713 5.429l4.243 4.242Z"/>
+        </svg>
+    </a>
+
+    <a href="/user/page">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+    </svg>
+    </a>
+    <div class="flex justify-end" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
         <a th:href="@{'products/add'}" th:if="${categoryId == null}" th:name="categoryId" th:value="*{categoryId}"
            class="text-white font-medium bg-yellow-500 hover:bg-yellow-600 rounded-xl inline-block py-3 px-6 mb-10">Добавить</a>
         <a th:href="@{'products/add?categoryId=' + ${categoryId}}" th:if="${categoryId != null}"
@@ -63,13 +77,13 @@
                     </div>
                 </form>
             </td>
-            <td class="text-center">
+            <td class="text-center" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
                 <a class="text-yellow-500 hover:text-yellow-700 text-lg"
                    th:href="@{|/products/edit/${product.getId()}|}">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </a>
             </td>
-            <td class="text-center">
+            <td class="text-center" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
                 <a class="text-red-500 hover:text-red-700 text-lg" th:href="@{|/products/delete/${product.getId()}|}">
                     <i class="fa-regular fa-trash-can"></i>
                 </a>
