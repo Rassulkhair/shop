@@ -1,184 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Details</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      color: #333333;
-      padding: 20px;
-    }
-    h1, h3 {
-      margin-bottom: 10px;
-    }
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"] {
-      width: 40%;
-      padding: 5px;
-      margin-bottom: 10px;
-      border: none;
-      border-radius: 3px;
-      background-color: #ffffff;
-      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-    }
-    .rate {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .rate > input[type="radio"] {
-      display: none;
-    }
-    .rate > label {
-      margin-right: 10px;
-      font-size: 24px;
-      color: #cccccc;
-      cursor: pointer;
-    }
-    .rate > label:before {
-      content: "★";
-    }
-    .rate > input[type="radio"]:checked ~ label {
-      color: #f1c40f;
-    }
-    input[type="submit"] {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 3px;
-      background-color: #f1c40f;
-      color: #ffffff;
-      cursor: pointer;
-    }
-    a {
-      color: #333333;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
-    }
-    a:hover {
-      color: #f1c40f;
-    }
-    .reviews-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .review {
-      width: 30%;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      padding: 10px;
-    }
-
-    .review-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .review-user {
-      margin: 0;
-    }
-
-    .review-rating {
-      font-size: 20px;
-      color: #ffc107;
-    }
-
-    .review-rating::before {
-      content: "\2605";
-    }
-
-    .review-text {
-      overflow-wrap: break-word;
-      margin: 0;
-    }
-
-  </style>
+  <!-- Add Bootstrap stylesheet -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-<h1>Product Details</h1>
+<div class="container">
+  <h1 class="my-5">Product Details</h1>
 
-<div th:object="${product}">
-  <p th:text="*{name}"></p>
-  <p th:text="*{price}"></p>
-  <p th:text="*{getCategory().name}"></p>
-</div>
-<div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
-  <div th:each="option : ${product.getCategory().getOptions()}" class="flex flex-col gap-2 w-full">
-    <label th:for="${option.getId()}" class="font-medium text-white" th:text="${option.getName()}"></label>
-    <span th:text="${@productService.findValueByProductAndOption(product, option)}"
-          th:id="${option.getId()}"
-          class="py-1.5 px-2.5 border border-white bg-white rounded-lg"></span>
-  </div>
-</div>
-
-
-<h3>Reviews</h3>
-<ul class="reviews-list" th:each="review : ${product.reviews}">
-  <li class="review">
-    <div class="review-header">
-      <h4 class="review-user" th:text="${review.user.getName()}"></h4>
-      <h5 class="review-user" th:text="${review.created_at}"></h5>
-      <span class="review-rating" th:text="${review.rating}"></span>
+  <div class="card mb-5" th:object="${product}">
+    <div class="card-body">
+      <h5 class="card-title" th:text="*{name}"></h5>
+      <h6 class="card-subtitle mb-2 text-muted" th:text="*{getCategory().name}"></h6>
+      <p class="card-text" th:text="*{price}"></p>
     </div>
-    <p class="review-text" th:text="${review.text}"></p>
-  </li>
-</ul>
-<h3>avg rate</h3>
-<span th:if="${@reviewService.getAvgRating(product.getId()) == 0}">-</span>
-<span class="font-medium" th:if="${@reviewService.getAvgRating(product.getId()) > 0}"
-      th:text="${#numbers.formatDecimal(@reviewService.getAvgRating(product.getId()), 0, 1, 'POINT')}"></span>
-<span class="text-gray-700">/ 5</span>
+  </div>
 
-<div th:if="${user != null}">
+  <div class="row mb-5">
+    <div th:each="option : ${product.getCategory().getOptions()}" class="col-md-6">
+      <div class="card">
+        <div class="card-header font-weight-bold" th:text="${option.getName()}"></div>
+        <div class="card-body">
+          <span class="border border-dark p-2 rounded" th:text="${@productService.findValueByProductAndOption(product, option)}"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Reviews</h3>
+  <ul class="list-group mb-5" th:each="review : ${product.reviews}">
+    <li class="list-group-item">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0" th:text="${review.user.getName()}"></h5>
+        <span class="text-muted" th:text="${review.created_at}"></span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-warning" th:text="${review.rating}"></span>
+        <span class="text-muted small">(out of 5)</span>
+      </div>
+      <p class="mb-0" th:text="${review.text}"></p>
+    </li>
+  </ul>
+
+  <div class="mb-5" th:if="${user != null}">
 <div th:if="${@reviewService.isReviewPresent(product.getId())}">
 <form th:action="@{|/products/${product.getId()}/publish_review|}" method="post" th:object="${reviews}">
-  <label for="text">Comment:</label>
-  <input type="text" id="text" name="text" th:value="*{text}">
-  <label>Rating:</label>
-  <div class="rate">
-    <input type="radio" id="star5" name="rating" value="5" th:checked="${reviews.rating == 5}" required/>
-    <label for="star5" title="text">5 stars</label>
-    <input type="radio" id="star4" name="rating" value="4" th:checked="${reviews.rating == 4}" required/>
-    <label for="star4" title="text">4 stars</label>
-    <input type="radio" id="star3" name="rating" value="3" th:checked="${reviews.rating == 3}" required/>
-    <label for="star3" title="text">3 stars</label>
-    <input type="radio" id="star2" name="rating" value="2" th:checked="${reviews.rating == 2}" required/>
-    <label for="star2" title="text">2 stars</label>
-    <input type="radio" id="star1" name="rating" value="1" th:checked="${reviews.rating == 1}" required/>
-    <label for="star1" title="text">1 star</label>
+  <div class="form-group">
+    <label>Rating:</label>
+    <div class="rate">
+      <input type="radio" id="star5" name="rating" value="5" th:checked="${reviews.rating == 5}" required/>
+      <label for="star5" title="text">5 stars</label>
+      <input type="radio" id="star4" name="rating" value="4" th:checked="${reviews.rating == 4}" required/>
+      <label for="star4" title="text">4 stars</label>
+      <input type="radio" id="star3" name="rating" value="3" th:checked="${reviews.rating == 3}" required/>
+      <label for="star3" title="text">3 stars</label>
+      <input type="radio" id="star2" name="rating" value="2" th:checked="${reviews.rating == 2}" required/>
+      <label for="star2" title="text">2 stars</label>
+      <input type="radio" id="star1" name="rating" value="1" th:checked="${reviews.rating == 1}" required/>
+      <label for="star1" title="text">1 star</label>
+    </div>
   </div>
-  <input type="submit" value="Add Review"/>
+  <div class="form-group">
+    <label for="text">Comment:</label>
+    <textarea id="text" name="text" class="form-control" rows="5" th:text="*{text}" required></textarea>
+  </div>
+  <div class="form-group">
+    <input type="submit" value="Add Review" class="btn btn-primary"/>
+  </div>
 </form>
 </div>
+  </div>
 </div>
-
-<a th:href="@{/products}">Back to Product List</a>
-<div th:if="${user != null}">
-<form th:action="@{/logout}" method="post">
-  <input type="submit" value="Sign Out"/>
-</form>
-</div>
-<div th:if="${user == null}">
-    <a href="login.html">Login In</a>
+<div class="d-flex justify-content-center">
+  <a th:href="@{/products}" class="d-inline-block text-center mx-3">Back to Product List</a>
+  <div th:if="${user != null}" class="d-inline-block text-center mx-3">
+    <form th:action="@{/logout}" method="post">
+      <input type="submit" value="Sign Out" class="btn btn-secondary"/>
+    </form>
+  </div>
+  <div th:if="${user == null}" class="d-inline-block text-center mx-3">
+    <a href="login.html" class="btn btn-primary">Login In</a>
+  </div>
 </div>
 </body>
 </html>

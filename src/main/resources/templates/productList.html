@@ -33,7 +33,7 @@
        href="/admin/panel" th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'')')}">
         <i class="fas fa-capsules"></i>
     </a>
-    <a href="/admin/panel/reviews" class="text-yellow-500 hover:text-yellow-700 text-lg">
+    <a th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'')')}" href="/admin/panel/reviews" class="text-yellow-500 hover:text-yellow-700 text-lg" style="margin-left: 30px">
         <i class="fas fa-comments"></i>
     </a>
     <div class="flex justify-end" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
