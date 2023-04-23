@@ -1,83 +1,37 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
 
-import kz.shokanov.rassulkhair.shop.entity.Cart;
-import kz.shokanov.rassulkhair.shop.entity.OrderDetails;
-import kz.shokanov.rassulkhair.shop.entity.User;
-import kz.shokanov.rassulkhair.shop.entity.enumiration.Status;
-import kz.shokanov.rassulkhair.shop.repository.CartRepo;
-import kz.shokanov.rassulkhair.shop.repository.OrderDetailsRepo;
-import kz.shokanov.rassulkhair.shop.repository.OrderRepo;
-import kz.shokanov.rassulkhair.shop.repository.UserRepo;
-import kz.shokanov.rassulkhair.shop.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import kz.shokanov.rassulkhair.shop.entity.Order;
+import kz.shokanov.rassulkhair.shop.service.OrderService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
-@RequestMapping("/cart/order")
+@AllArgsConstructor
 public class OrderController {
+    private OrderService orderService;
 
-    @Autowired
-    private OrderRepo orderRepo;
-
-    @Autowired
-    private CartRepo cartRepo;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
-    private OrderDetailsRepo orderDetailsRepo;
-
-    @GetMapping()
-    public String orderPage(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
-        User user = userRepo.findById(userId).orElseThrow();
-
-        List<Cart> cartItems = cartRepo.findByUser(user);
-
-        model.addAttribute("cartItems",cartItems);
+    @GetMapping("/cart/order")
+    public String orderPage(Model model) {
+        model.addAttribute("cartItems", orderService.getOrderPage());
         return "order-form";
     }
 
 
-    @PostMapping("/create")
-    public String createOrder(@ModelAttribute("order") kz.shokanov.rassulkhair.shop.entity.Order order,
-                              @AuthenticationPrincipal User user,
+    @PostMapping("/cart/order/create")
+    public String createOrder(@ModelAttribute("order") Order order,
                               @RequestParam("address") String address) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User currentUser = userRepo.findUserByName(userDetails.getUsername());
-        order.setUser(currentUser);
-
-        order.setStatus(Status.INSTOCK);
-        order.setAddress(address);
-        order.setCreated_at(LocalDateTime.now());
-        orderRepo.save(order);
-        List<Cart> carts = cartRepo.findByUser(currentUser);
-        for (var cart: carts
-             ) {
-            OrderDetails orderDetails = new OrderDetails();
-            orderDetails.setOrder(order);
-            orderDetails.setCount(cart.getCount());
-            orderDetails.setProduct(cart.getProduct());
-            orderDetailsRepo.save(orderDetails);
-        }
-        cartRepo.deleteAllByUser(currentUser);
+        orderService.createOrder(order, address);
 
         return "redirect:/products";
+    }
+
+    @GetMapping("/order/{id}/details")
+    public String showProductDetails(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("orderDetails", orderService.getAllDetails(orderService.getOrderDetails(id)));
+        return "orderDetails";
     }
 }

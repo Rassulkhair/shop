@@ -1,76 +1,39 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import kz.shokanov.rassulkhair.shop.entity.Cart;
+import kz.shokanov.rassulkhair.shop.service.CartService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import kz.shokanov.rassulkhair.shop.entity.*;
-import kz.shokanov.rassulkhair.shop.repository.*;
+
 import java.util.List;
 
 @Controller
 @RequestMapping("/cart")
+@AllArgsConstructor
 public class CartController {
-
-    @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
-    private ProductRepo productRepo;
-
-    @Autowired
-    private CartRepo cartRepo;
+    private CartService cartService;
 
     @PostMapping("/{productId}")
     public String addToCart(@PathVariable(value = "productId") Long productId,
                             @RequestParam(value = "count") int count) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
-        User user = userRepo.findById(userId).orElseThrow();
-        Product product = productRepo.findById(productId).orElseThrow();
-        if (cartRepo.existsCartByUserAndProduct(user,product)){
-            Cart c1 = cartRepo.findCartByUserAndProduct(user,product);
-            cartRepo.delete(c1);
-        }
-        else {
-            Cart cart = new Cart();
-            cart.setUser(user);
-            cart.setProduct(product);
-            cart.setCount(count);
-            cartRepo.save(cart);
-        }
+        cartService.addCart(productId,count);
         return "redirect:/products";
     }
 
 
     @GetMapping()
     public String getAllCartItemsForUser(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-        Long userId = userRepo.findUserByName(userPrincipal.getUsername()).getId();
-        User user = userRepo.findById(userId).orElseThrow();
-        List<Cart> cartItems = cartRepo.findByUser(user);
-        double cost = 0;
-        for (var cart:cartItems
-             ) {
-            cost = cost + (cart.getCount()*cart.getProduct().getPrice());
-        }
+        List<Cart> cartItems = cartService.getAllCartItems();
         model.addAttribute("cartList",cartItems);
-        model.addAttribute("summariseCOST",cost);
-
+        model.addAttribute("summariseCOST",cartService.getCost(cartItems));
         return "cart";
     }
+
     @PostMapping("/delete/{cartItemId}")
     public String deleteCartItem(@PathVariable(value = "cartItemId") Long cartItemId) {
-
-        Cart cartItem = cartRepo.findById(cartItemId).orElseThrow();
-
-        cartRepo.delete(cartItem);
-
+        cartService.deleteItemFromCart(cartItemId);
         return "redirect:/cart";
     }
 }

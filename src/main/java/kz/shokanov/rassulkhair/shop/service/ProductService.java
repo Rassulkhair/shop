@@ -4,25 +4,19 @@ import kz.shokanov.rassulkhair.shop.entity.Category;
 import kz.shokanov.rassulkhair.shop.entity.Option;
 import kz.shokanov.rassulkhair.shop.entity.Product;
 import kz.shokanov.rassulkhair.shop.entity.Value;
-import kz.shokanov.rassulkhair.shop.repository.CategoryRepo;
-import kz.shokanov.rassulkhair.shop.repository.OptionRepo;
-import kz.shokanov.rassulkhair.shop.repository.ProductRepo;
-import kz.shokanov.rassulkhair.shop.repository.ValueRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import kz.shokanov.rassulkhair.shop.repository.*;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ProductService {
-    @Autowired
-    CategoryRepo categoryRepo;
-    @Autowired
-    ProductRepo productRepo;
-    @Autowired
-    OptionRepo optionRepo;
-    @Autowired
-    ValueRepo valueRepo;
+   private CategoryRepo categoryRepo;
+    private ProductRepo productRepo;
+    private OptionRepo optionRepo;
+    private ValueRepo valueRepo;
 
     public void addProduct(long categoryId, Product product, List<String> values) {
         Category category = categoryRepo.findById(categoryId).orElseThrow();
@@ -40,9 +34,6 @@ public class ProductService {
     }
 
     public void updateProduct(long productId, String name, Double price, List<String> values) {
-        System.out.println("---------------");
-        System.out.println(values);
-        System.out.println("---------------");
         Product product = productRepo.findById(productId).orElseThrow();
         if (name != null) product.setName(name);
         if (price != null) product.setPrice(price);
@@ -61,9 +52,38 @@ public class ProductService {
             valueRepo.save(value);
         }
     }
+
     public String findValueByProductAndOption(Product product, Option option) {
         Value value = valueRepo.findByProductAndOption(product, option);
         return value != null ? value.getValue() : "";
+    }
+
+    public List<Product> getAllProducts(Long categoryId) {
+        Sort sort = Sort.by(Sort.Order.desc("price"),
+                Sort.Order.asc("id"));
+        List<Product> products = productRepo.findAll(sort);
+        if (categoryId != null) {
+            Category category = categoryRepo.findById(categoryId).orElseThrow();
+            products = category.getProducts();
+        }
+        return products;
+    }
+
+    public Integer getAvgCost(List<Product> products) {
+        int avg = 0;
+        if (!products.isEmpty()) {
+            for (Product product : products) {
+                avg = (int) (avg + product.getPrice());
+            }
+            avg = avg / products.size();
+        }
+    return avg;
+    }
+
+    public void deleteProduct(Long id){
+        Product product = productRepo.findById(id).orElseThrow();
+        valueRepo.deleteAll(product.getValues());
+        productRepo.delete(product);
     }
 }
 

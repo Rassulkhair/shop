@@ -1,48 +1,34 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
 import kz.shokanov.rassulkhair.shop.entity.enumiration.Status;
+import kz.shokanov.rassulkhair.shop.service.OrderService;
 import kz.shokanov.rassulkhair.shop.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import kz.shokanov.rassulkhair.shop.entity.*;
-import kz.shokanov.rassulkhair.shop.repository.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(path = "admin")
+@AllArgsConstructor
 public class AdminController {
-    @Autowired
     UserService userService;
-    @Autowired
-    UserRepo userRepo;
-    @Autowired
-    OrderRepo orderRepo;
-    @Autowired
-    CategoryRepo categoryRepo;
+    OrderService orderService;
 
     @GetMapping(path = "/panel")
     public String getAdminPage(Model model, @RequestParam(required = false) Long categoryId) {
-        Long userId = userService.getCurrentUser().getId();
-        User user = userRepo.findById(userId).orElseThrow();
-        List<Order> orders = orderRepo.findAllByOrderByStatusAsc(); // Здесь предполагается, что у вас есть метод findAllByOrderByStatusAsc() в вашем репозитории для сортировки по статусу
-        model.addAttribute("orders", orders);
-        model.addAttribute("user", user);
+        model.addAttribute("orders", orderService.getAllOrdersByStatus());
+        model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("categoryId", categoryId);
         return "adminPage";
     }
 
     @PostMapping(path = "/updateOrderStatus")
     public String updateOrderStatus(@RequestParam Long orderId, @RequestParam Status status) {
-        Order order = orderRepo.findById(orderId).orElseThrow();
-        order.setStatus(status);
-        orderRepo.save(order);
+        orderService.updateStatusOrder(orderId,status);
         return "redirect:/admin/panel";
     }
 

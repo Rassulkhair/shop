@@ -1,17 +1,14 @@
 package kz.shokanov.rassulkhair.shop.controller;
 
-import kz.shokanov.rassulkhair.shop.entity.User;
-import kz.shokanov.rassulkhair.shop.repository.*;
-import kz.shokanov.rassulkhair.shop.service.ProductService;
 import kz.shokanov.rassulkhair.shop.entity.Category;
-import kz.shokanov.rassulkhair.shop.entity.Option;
 import kz.shokanov.rassulkhair.shop.entity.Product;
+import kz.shokanov.rassulkhair.shop.repository.CategoryRepo;
+import kz.shokanov.rassulkhair.shop.repository.OptionRepo;
+import kz.shokanov.rassulkhair.shop.repository.ProductRepo;
+import kz.shokanov.rassulkhair.shop.repository.UserRepo;
+import kz.shokanov.rassulkhair.shop.service.ProductService;
 import kz.shokanov.rassulkhair.shop.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,45 +18,22 @@ import java.util.List;
 
 
 @Controller
+@AllArgsConstructor
 public class ProductListController {
-    @Autowired
     private ProductRepo productRepo;
-    @Autowired
     private CategoryRepo categoryRepo;
-    @Autowired
     private OptionRepo optionRepo;
-    @Autowired
-    private ValueRepo valueRepo;
 
-    @Autowired
     ProductService productService;
-    @Autowired
     UserRepo userRepo;
-    @Autowired
     UserService userService;
 
     @GetMapping(path = "products")
     public String getProducts(@RequestParam(required = false) Long categoryId,
                               Model model) {
-        Long userId = userService.getCurrentUser().getId();
-        User user = userRepo.findById(userId).orElseThrow();
-        Sort sort = Sort.by(Sort.Order.desc("price"),
-                Sort.Order.asc("id"));
-        List<Product> products = productRepo.findAll(sort);
-        if (categoryId != null) {
-            Category category = categoryRepo.findById(categoryId).orElseThrow();
-            model.addAttribute("category_name", category.getName());
-            products = category.getProducts();
-        }
-        int avg = 0;
-        if (!products.isEmpty()) {
-            for (Product product : products) {
-                avg = (int) (avg + product.getPrice());
-            }
-            avg = avg / products.size();
-        }
-        model.addAttribute("avg", avg);
-        model.addAttribute("user", user);
+        List<Product> products = productService.getAllProducts(categoryId);
+        model.addAttribute("avg", productService.getAvgCost(products));
+        model.addAttribute("user", userService.getCurrentUser());
         model.addAttribute("products", products);
         model.addAttribute("categoryId", categoryId);
         return "productList";
@@ -98,17 +72,15 @@ public class ProductListController {
     public String updateProduct(
             @PathVariable("id") Long id,
             Model model) {
-
         Product product = productRepo.findById(id).orElseThrow();
-        List<Option> options = optionRepo.findAllByCategoryOrderById(product.getCategory());
-        model.addAttribute("product", product);
-        model.addAttribute("options", options);
+        model.addAttribute("product", productRepo.findById(id).orElseThrow());
+        model.addAttribute("options", optionRepo.findAllByCategoryOrderById(product.getCategory()));
         return "update_product";
     }
 
-    @PostMapping(path = "/products/edit/{id}")
+    @PostMapping(path = "/products/edit/{productId}")
     public String saveUpdatedProduct(
-            @RequestParam long productId,
+            @PathVariable long productId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Double price,
             @RequestParam(required = false) List<String> updatedValues) {
@@ -119,11 +91,8 @@ public class ProductListController {
 
     @GetMapping(path = "/products/delete/{id}")
     public String deleteProduct(
-            @PathVariable("id") Long id
-    ) {
-        Product product = productRepo.findById(id).orElseThrow();
-        valueRepo.deleteAll(product.getValues());
-        productRepo.delete(product);
+            @PathVariable("id") Long id) {
+        productService.deleteProduct(id);
         return "redirect:/products";
     }
 }

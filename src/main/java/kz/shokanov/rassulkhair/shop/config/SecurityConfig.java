@@ -16,7 +16,7 @@ public class SecurityConfig{
                 .csrf()
                     .disable()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home").permitAll()
+//                        .requestMatchers("/", "/review").permitAll()
                         .requestMatchers("/registration").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -27,8 +27,6 @@ public class SecurityConfig{
                         .defaultSuccessUrl("/products")
                 )
                 .logout(LogoutConfigurer::permitAll);
-
-
         return http.build();
     }
 
