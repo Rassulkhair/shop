@@ -49,8 +49,9 @@
     </tr>
     </tbody>
 </table>
+<div th:if = "${!cartList.isEmpty()}">
 <a href="/cart/order">Create Order</a>
-
+</div>
 <div class="text-center pr-3 py-6 text-xl ">
     <a class="text-yellow-500 hover:text-yellow-700 text-lg"
        href="/products">
