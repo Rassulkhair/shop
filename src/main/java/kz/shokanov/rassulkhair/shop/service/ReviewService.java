@@ -51,22 +51,21 @@ public class ReviewService {
             Optional<User> user = userRepo.findById(userId);
             Optional<Product> product = productRepo.findById(id);
             Optional<Review> existingReview = Optional.ofNullable(reviewRepo.findByUserAndProduct(user, product));
+            Review review;
             if (existingReview.isPresent()) {
-                Review review = existingReview.get();
+                review = existingReview.get();
                 review.setRating(rating);
                 review.setText(text);
                 review.set_published(true);
-                review.setCreated_at(LocalDateTime.now());
-                reviewRepo.save(review);
             } else {
-                Review review = new Review();
+                review = new Review();
                 review.setUser(userRepo.findById(userId).orElseThrow());
                 review.setProduct(productRepo.findById(id).orElseThrow());
                 review.setRating(rating);
                 review.setText(text);
-                review.setCreated_at(LocalDateTime.now());
-                reviewRepo.save(review);
             }
+            review.setCreated_at(LocalDateTime.now());
+            reviewRepo.save(review);
         }
     }
     public Product showDetails(Long id){

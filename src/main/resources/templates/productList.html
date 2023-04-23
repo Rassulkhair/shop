@@ -16,7 +16,8 @@
 </head>
 <body>
 <p class="authentication" style="margin-left: 50%">Hello, </p>
-<p class="authentication" sec:authentication="principal.username"></p>
+<p class="authentication" th:if="${user != null}" th:text="${user.getName()}"></p>
+<p class="authentication" th:if="${user == null}">гость</p>
 <div class="container mx-auto relative">
     <a class="text-yellow-500 hover:text-yellow-700 text-lg"
        href="/cart">

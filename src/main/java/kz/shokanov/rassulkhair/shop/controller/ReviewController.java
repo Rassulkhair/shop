@@ -2,6 +2,7 @@ package kz.shokanov.rassulkhair.shop.controller;
 
 import kz.shokanov.rassulkhair.shop.entity.Review;
 import kz.shokanov.rassulkhair.shop.service.ReviewService;
+import kz.shokanov.rassulkhair.shop.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @AllArgsConstructor
 public class ReviewController {
     ReviewService reviewService;
+    UserService userService;
 
     @GetMapping("/products/{id}/details")
     public String showProductDetails(@PathVariable("id") Long id, Model model) {
         model.addAttribute("reviews", new Review());
         model.addAttribute("product", reviewService.showDetails(id));
+        model.addAttribute("user", userService.getCurrentUser());
         return "productDetails";
     }
 

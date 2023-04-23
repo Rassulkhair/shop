@@ -148,6 +148,7 @@
       th:text="${#numbers.formatDecimal(@reviewService.getAvgRating(product.getId()), 0, 1, 'POINT')}"></span>
 <span class="text-gray-700">/ 5</span>
 
+<div th:if="${user != null}">
 <div th:if="${@reviewService.isReviewPresent(product.getId())}">
 <form th:action="@{|/products/${product.getId()}/publish_review|}" method="post" th:object="${reviews}">
   <label for="text">Comment:</label>
@@ -168,11 +169,16 @@
   <input type="submit" value="Add Review"/>
 </form>
 </div>
+</div>
 
 <a th:href="@{/products}">Back to Product List</a>
-
+<div th:if="${user != null}">
 <form th:action="@{/logout}" method="post">
   <input type="submit" value="Sign Out"/>
 </form>
+</div>
+<div th:if="${user == null}">
+    <a href="login.html">Login In</a>
+</div>
 </body>
 </html>
