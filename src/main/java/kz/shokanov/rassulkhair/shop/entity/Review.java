@@ -26,7 +26,8 @@ public class Review {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    boolean is_published;
+    @Column(name = "is_published")
+    private boolean published;
 
     private int rating;
 

@@ -56,13 +56,14 @@ public class ReviewService {
                 review = existingReview.get();
                 review.setRating(rating);
                 review.setText(text);
-                review.set_published(true);
+                review.setPublished(true);
             } else {
                 review = new Review();
                 review.setUser(userRepo.findById(userId).orElseThrow());
                 review.setProduct(productRepo.findById(id).orElseThrow());
                 review.setRating(rating);
                 review.setText(text);
+                review.setPublished(false);
             }
             review.setCreated_at(LocalDateTime.now());
             reviewRepo.save(review);
@@ -78,6 +79,11 @@ public class ReviewService {
 
     public void deleteReview(Long id){
         reviewRepo.deleteById(id);
+    }
+    public void postReview(long id) {
+        Review review = reviewRepo.findById(id).orElseThrow();
+        review.setPublished(true);
+        reviewRepo.save(review);
     }
 }
 

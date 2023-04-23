@@ -27,7 +27,14 @@
                 <td th:text="${review.getText()}"></td>
                 <td th:text="${review.getRating()}"></td>
                 <td th:text="${review.getCreated_at()}"></td>
-                <td>
+
+                <td class="d-flex justify-content-between">
+                    <form th:action="@{/admin/reviews/post}" method="get">
+                        <input type="hidden" name="reviewId" th:value="${review.getId()}">
+                        <button type="submit" class="btn btn-primary">
+                            Publish
+                        </button>
+                    </form>
                     <form th:action="@{/admin/delete/review/{id}(id=${review.id})}" method="post">
                         <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
@@ -35,6 +42,9 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div class="d-flex justify-content-center">
+        <a th:href="@{/products}" class="d-inline-block text-center mx-3">Back to Product List</a>
     </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

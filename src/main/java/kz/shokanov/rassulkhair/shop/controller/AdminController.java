@@ -42,5 +42,11 @@ public class AdminController {
         reviewService.deleteReview(id);
         return "redirect:/admin/panel/reviews";
     }
-
+    @GetMapping(path = "/reviews/post")
+    public String postReview(
+            @RequestParam(name = "reviewId") long id
+    ) {
+        reviewService.postReview(id);
+        return "redirect:/admin/panel/reviews";
+    }
 }
