@@ -2,14 +2,12 @@ package kz.shokanov.rassulkhair.shop.controller;
 
 import kz.shokanov.rassulkhair.shop.entity.enumiration.Status;
 import kz.shokanov.rassulkhair.shop.service.OrderService;
+import kz.shokanov.rassulkhair.shop.service.ReviewService;
 import kz.shokanov.rassulkhair.shop.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(path = "admin")
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminController {
     UserService userService;
     OrderService orderService;
+    ReviewService reviewService;
 
     @GetMapping(path = "/panel")
     public String getAdminPage(Model model, @RequestParam(required = false) Long categoryId) {
@@ -28,9 +27,20 @@ public class AdminController {
 
     @PostMapping(path = "/updateOrderStatus")
     public String updateOrderStatus(@RequestParam Long orderId, @RequestParam Status status) {
-        orderService.updateStatusOrder(orderId,status);
+        orderService.updateStatusOrder(orderId, status);
         return "redirect:/admin/panel";
     }
 
+    @GetMapping(path = "/panel/reviews")
+    public String getReviews(Model model) {
+        model.addAttribute("reviewList", reviewService.reviewList());
+        return "reviewPanel";
+    }
+
+    @PostMapping(path = "/delete/review/{id}")
+    public String deleteReview(@PathVariable Long id) {
+        reviewService.deleteReview(id);
+        return "redirect:/admin/panel/reviews";
+    }
 
 }

@@ -71,5 +71,13 @@ public class ReviewService {
     public Product showDetails(Long id){
         return productRepo.findById(id).orElseThrow();
     }
+
+    public List<Review> reviewList(){
+        return reviewRepo.findAll();
+    }
+
+    public void deleteReview(Long id){
+        reviewRepo.deleteById(id);
+    }
 }
 

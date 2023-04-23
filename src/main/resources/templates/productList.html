@@ -19,23 +19,22 @@
 <p class="authentication" th:if="${user != null}" th:text="${user.getName()}"></p>
 <p class="authentication" th:if="${user == null}">гость</p>
 <div class="container mx-auto relative">
+
+    <a href="/user/page" style="display: inline-block; margin-right: 30px">
+        <i class="fas fa-user text-yellow-500 hover:text-yellow-700"></i>
+    </a>
+
     <a class="text-yellow-500 hover:text-yellow-700 text-lg"
        href="/cart">
-        <i class="fa-solid fa-cart-shopping"></i>
+        <i class="fas fa-shopping-cart"></i>
     </a>
 
-    <a class="text-red-500 hover:text-red-700 text-lg" style="margin-top: 30px"
+    <a class="text-yellow-500 hover:text-yellow-700 text-lg" style="display: inline-block; margin-left: 30px"
        href="/admin/panel" th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'')')}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-capsule" viewBox="0 0 16 16">
-            <path d="M1.828 8.9 8.9 1.827a4 4 0 1 1 5.657 5.657l-7.07 7.071A4 4 0 1 1 1.827 8.9Zm9.128.771 2.893-2.893a3 3 0 1 0-4.243-4.242L6.713 5.429l4.243 4.242Z"/>
-        </svg>
+        <i class="fas fa-capsules"></i>
     </a>
-
-    <a href="/user/page">
-    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-    </svg>
+    <a href="/admin/panel/reviews" class="text-yellow-500 hover:text-yellow-700 text-lg">
+        <i class="fas fa-comments"></i>
     </a>
     <div class="flex justify-end" th:if="${#authorization.expression('hasAnyRole(''ROLE_MODERATOR'', ''ROLE_ADMIN'')')}">
         <a th:href="@{'products/add'}" th:if="${categoryId == null}" th:name="categoryId" th:value="*{categoryId}"
